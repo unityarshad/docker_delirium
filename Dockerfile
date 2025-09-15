@@ -18,7 +18,6 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
     fi
 
 # Set work directory
-MKDIR local_data
 WORKDIR /app
 
 # Create a Python virtual environment and install Python dependencies
