@@ -17,13 +17,15 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
         echo "Installing AMD64-specific libraries or packages"; \
     fi
 
+# Set work directory
+WORKDIR /app
+
 # Create a Python virtual environment and install Python dependencies
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --trusted-host pypi.org --trusted-host files.pythonhosted.org --upgrade pip==23.3.* \
     && pip install --no-cache-dir --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt
 
-# Set work directory and copy application files
-WORKDIR /app
+# copy application files
 COPY calc.py /app/
 COPY xgb_model.pkl /app/
 COPY feature_list.pkl /app/
