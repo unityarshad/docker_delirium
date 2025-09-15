@@ -1,0 +1,23 @@
+name: gemini_calc
+channels:
+  - conda-forge
+  - plotly
+dependencies:
+  - python=3.11
+  - jupyterlab
+  - matplotlib
+  - numpy
+  - pandas
+  - scipy
+  - tqdm
+  - pip
+  - ipywidgets
+  - scikit-learn
+  - seaborn
+  - h5py
+  - py-xgboost
+  - pip:
+      - nbdev
+      - black
+      - streamlit
+      - kaleido
