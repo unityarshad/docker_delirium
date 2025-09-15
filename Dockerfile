@@ -18,6 +18,7 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
     fi
 
 # Set work directory
+MKDIR local_data
 WORKDIR /app
 
 # Create a Python virtual environment and install Python dependencies
@@ -32,7 +33,7 @@ COPY feature_list.pkl /app/
 COPY short_names.pkl /app/
 COPY resources/ /app/resources/
 COPY templates/ /app/templates/
-# COPY local_data /app/local_data
+COPY local_data /app/local_data
 COPY static/ /app/static/
 
 # Set permissions
