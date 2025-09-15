@@ -19,8 +19,8 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
 
 # Create a Python virtual environment and install Python dependencies
 COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --upgrade pip==23.3.* \
-    && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --trusted-host pypi.org --trusted-host files.pythonhosted.org --upgrade pip==23.3.* \
+    && pip install --no-cache-dir --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt
 
 # Set work directory and copy application files
 WORKDIR /app
