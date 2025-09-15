@@ -17,10 +17,6 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
         echo "Installing AMD64-specific libraries or packages"; \
     fi
 
-# Update Python alternatives to point to Python 3.10
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1 && \
-    update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
-
 # Create a Python virtual environment and install Python dependencies
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip==23.3.* \
