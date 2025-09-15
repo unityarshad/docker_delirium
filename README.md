@@ -1,3 +1,4 @@
-To run this tool locally, pip install the requirements and run `streamlit run calc.py`.
-
-To deploy this tool for others to utilize, follow [this tutorial](https://docs.streamlit.io/deploy/tutorials/docker).
+To build and deploy the docker:
+1. podman build -f Dockerfile -t delirium_image
+2. In screen, run:
+    podman run -p 8001:8501 localhost/delirium_image:latest
