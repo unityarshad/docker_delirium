@@ -6,7 +6,7 @@ ENV TARGETARCH=$TARGETARCH
 
 # Install system dependencies in one layer with version pinning
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libssl-dev=3.0.* \
+    libssl-dev* \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -44,4 +44,4 @@ RUN chmod -R 755 /app/resources /app/local_data /app/static
 EXPOSE 8501
 
 # Command to run the Streamlit app
-CMD ["/bin/bash", "-c", "source /app/venv/bin/activate && streamlit run calc.py --server.port=8501 --server.address=0.0.0.0"]
+CMD ["streamlit", "run", "calc.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
