@@ -30,13 +30,13 @@ COPY calc.py /app/
 COPY xgb_model.pkl /app/
 COPY feature_list.pkl /app/
 COPY short_names.pkl /app/
-COPY resources/ /app/resources/
-COPY templates/ /app/templates/
-COPY local_data /app/local_data
-COPY static/ /app/static/
+# COPY resources/ /app/resources/
+# COPY templates/ /app/templates/
+# COPY local_data /app/local_data
+# COPY static/ /app/static/
 
 # Set permissions
-RUN chmod -R 755 /app/resources /app/local_data /app/static
+# RUN chmod -R 755 /app/resources /app/local_data /app/static
 
 # Expose port for the Streamlit app
 EXPOSE 8501
