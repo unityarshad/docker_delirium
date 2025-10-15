@@ -144,7 +144,8 @@ with col1:
 
                 st.markdown("### Model Output")
 
-                st.info(f"**Unique Identifier:** `{unique_identifier}`")
+                st.info(f"**Unique Identifier:** `{unique_id}`")
+                st.info(f"**Prediction generates at** `{timestamp}`")
                 
                 # Prepare input for the model
                 # pred = clf.predict(df)[0]
