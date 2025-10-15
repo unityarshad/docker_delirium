@@ -3,7 +3,8 @@ import numpy as np
 import streamlit as st
 from xgboost import XGBClassifier
 import pickle
-
+import uuid
+from datetime import datetime
 import requests
 
 
@@ -127,6 +128,9 @@ with col1:
             elif user_inputs['Age'] is None or user_inputs['Age'] == 0:
                 st.error("Please enter a valid age (18 or older).")
             else:
+                unique_id = str(uuid.uuid4())
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                
                 for diag in diag_short_list:
                     if diag in diagnoses:
                         user_inputs[f'{diag}'] = 1
@@ -139,6 +143,9 @@ with col1:
                 df.columns = features
 
                 st.markdown("### Model Output")
+
+                st.info(f"**Unique Identifier:** `{unique_identifier}`")
+                
                 # Prepare input for the model
                 # pred = clf.predict(df)[0]
                 pred_proba = clf.predict_proba(df)[:, 1][0]
@@ -150,6 +157,8 @@ with col1:
                     st.markdown(':red[High Risk]')
 
                 dict_ = df.iloc[0].to_dict()
+                dict_['unique_identifier'] = unique_identifier
+                dict_['timestamp'] = timestamp
                 dict_['pred_proba'] = pred_proba
                 dict_['mrn'] = mrn
                 for k,v in dict_.items():
