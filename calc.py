@@ -143,22 +143,22 @@ with col1:
                 df.columns = features
 
                 st.markdown("### Model Output")
-
-                st.info(f"**Unique Identifier:** `{unique_id}`")
-                st.info(f"**Prediction generates at** `{timestamp}`")
                 
                 # Prepare input for the model
                 # pred = clf.predict(df)[0]
                 pred_proba = clf.predict_proba(df)[:, 1][0]
                 if pred_proba < 0.5:
-                    st.markdown(':green[Low Risk]')
+                    st.markdown('## :green[Low Risk]')
                 elif 0.5 <= pred_proba < 0.75:
-                    st.markdown(':orange[Moderate Risk]')
+                    st.markdown('## :orange[Moderate Risk]')
                 elif pred_proba >= 0.75:
-                    st.markdown(':red[High Risk]')
+                    st.markdown('## :red[High Risk]')
+
+                st.info(f"**Unique Identifier:** `{unique_id}`")
+                st.info(f"**Prediction generated at** `{timestamp}`")
 
                 dict_ = df.iloc[0].to_dict()
-                dict_['unique_identifier'] = unique_identifier
+                dict_['unique_identifier'] = unique_id
                 dict_['timestamp'] = timestamp
                 dict_['pred_proba'] = pred_proba
                 dict_['mrn'] = mrn
