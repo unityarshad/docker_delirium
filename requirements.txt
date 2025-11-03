@@ -2,3 +2,4 @@ pandas
 xgboost
 numpy
 streamlit
+pycap
