@@ -6,13 +6,18 @@ import pickle
 import uuid
 from datetime import datetime
 import requests
+from redcap import project
 
-
+# Model
 MODEL_FILE = 'xgb_model.pkl'
 FEATURE_LIST = 'feature_list.pkl'
 SHORT_NAMES = 'short_names.pkl'
 URL = 'https://webhook.site/6f0f9f6d-6b4c-443a-b9ce-b3cbcff99b2b'
 
+# Pycap database setup
+api_url = 'https://redcap.smh.ca/redcap/api/'
+# api_key = 'SomeSuperSecretAPIKeyThatNobodyElseShouldHave'
+# project = Project(api_url, api_key)
 
 with open(MODEL_FILE, "rb") as f:
     clf = pickle.load(f)
@@ -166,6 +171,11 @@ with col1:
                     st.info(k)
                     if isinstance(v, (np.integer, np.floating)):
                         dict_[k] = v.item()
+
+                # Push data to redcap
+                to_import = [dict]
+                # response = project.import_records(to_import)
+               
                 x = requests.post(URL, json = dict_)
                 if x.status_code != 200:
                     st.error("Error saving results to the database.")
