@@ -7,7 +7,11 @@ import uuid
 from datetime import datetime
 import requests
 from redcap import project
+from dotenv import load_dotenv
 import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Model
 MODEL_FILE = 'xgb_model.pkl'
@@ -20,7 +24,7 @@ api_url = 'https://redcap.smh.ca/redcap/api/'
 # api_key = os.getenv('REDCAP_API_KEY')  # Read from environment 
 
 # if not api_key:
-#     st.error("API key not found. Please set REDCAP_API_KEY environment variable.")
+#     st.error("REDCAP_API_KEY not found in .env file")
 #     st.stop()# project = Project(api_url, api_key)
 
 with open(MODEL_FILE, "rb") as f:
