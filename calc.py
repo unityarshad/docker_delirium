@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime
 import requests
 from redcap import project
+import os
 
 # Model
 MODEL_FILE = 'xgb_model.pkl'
@@ -16,8 +17,11 @@ URL = 'https://webhook.site/6f0f9f6d-6b4c-443a-b9ce-b3cbcff99b2b'
 
 # Pycap database setup
 api_url = 'https://redcap.smh.ca/redcap/api/'
-# api_key = 'SomeSuperSecretAPIKeyThatNobodyElseShouldHave'
-# project = Project(api_url, api_key)
+# api_key = os.getenv('REDCAP_API_KEY')  # Read from environment 
+
+# if not api_key:
+#     st.error("API key not found. Please set REDCAP_API_KEY environment variable.")
+#     st.stop()# project = Project(api_url, api_key)
 
 with open(MODEL_FILE, "rb") as f:
     clf = pickle.load(f)
