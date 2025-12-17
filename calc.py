@@ -86,6 +86,9 @@ with col1:
     user_inputs = {}
     st.markdown("### Calculator Inputs")
     mrn = st.number_input("MRN", min_value=0, max_value=99999999, key='mrn', help="Enter the patient's Medical Record Number (MRN).")
+    hospitals = ["Hospital A", "Hospital B", "Hospital C"]  # Replace with your list of hospitals
+    selected_hospital = st.selectbox("Select Hospital", hospitals)
+    user_inputs['Hospital'] = selected_hospital
     st.write("Enter values for the features below:")
     age_cols_left, age_cols_right = st.columns([.3,.7])
     with age_cols_left:
@@ -172,6 +175,7 @@ with col1:
 
                 dict_ = df.iloc[0].to_dict()
                 dict_['unique_id_mrn'] = unique_id
+                dict_['hospital'] = selected_hospital
                 dict_['unique_id_del_input'] = unique_id
                 dict_['timestamp'] = timestamp
                 dict_['pred_proba'] = pred_proba
