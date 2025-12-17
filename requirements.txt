@@ -3,3 +3,4 @@ xgboost
 numpy
 streamlit
 pycap
+python-dotenv
