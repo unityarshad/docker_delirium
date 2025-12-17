@@ -179,11 +179,11 @@ with col1:
                     # st.info(k)
                     if isinstance(v, (np.integer, np.floating)):
                         dict_[k] = v.item()
-
+                
+                for key, val in dict.items():
+                    st.info(f'Key is: {key} - val is {val}')
                 # Push data to redcap
                 to_import = [dict]
-                for key, val in to_import.items():
-                    st.info(f'{key} - {val}')
                 # response = project.import_records(to_import)
                
                 x = requests.post(URL, json = dict_)
