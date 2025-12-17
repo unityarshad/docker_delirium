@@ -176,12 +176,14 @@ with col1:
                 dict_['pred_proba'] = pred_proba
                 dict_['mrn'] = mrn
                 for k,v in dict_.items():
-                    st.info(k)
+                    # st.info(k)
                     if isinstance(v, (np.integer, np.floating)):
                         dict_[k] = v.item()
 
                 # Push data to redcap
                 to_import = [dict]
+                for key, val in to_import.items():
+                    st.info(f'{key} - {val}')
                 # response = project.import_records(to_import)
                
                 x = requests.post(URL, json = dict_)
