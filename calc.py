@@ -180,7 +180,7 @@ with col1:
                     if isinstance(v, (np.integer, np.floating)):
                         dict_[k] = v.item()
                 
-                for key, val in dict.items():
+                for key, val in dict_.items():
                     st.info(f'Key is: {key} - val is {val}')
                 # Push data to redcap
                 to_import = [dict]
