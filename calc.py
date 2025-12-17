@@ -171,7 +171,8 @@ with col1:
                 st.info(f"**Prediction generated at** `{timestamp}`")
 
                 dict_ = df.iloc[0].to_dict()
-                dict_['unique_identifier'] = unique_id
+                dict_['unique_id_mrn'] = unique_id
+                dict_['unique_id_del_input'] = unique_id
                 dict_['timestamp'] = timestamp
                 dict_['pred_proba'] = pred_proba
                 dict_['mrn'] = mrn
