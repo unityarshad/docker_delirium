@@ -17,15 +17,14 @@ load_dotenv()
 MODEL_FILE = 'xgb_model.pkl'
 FEATURE_LIST = 'feature_list.pkl'
 SHORT_NAMES = 'short_names.pkl'
-URL = 'https://webhook.site/6f0f9f6d-6b4c-443a-b9ce-b3cbcff99b2b'
 
 # Pycap database setup
 api_url = 'https://redcap.smh.ca/redcap/api/'
-# api_key = os.getenv('REDCAP_API_KEY')  # Read from environment 
+api_key = os.getenv('REDCAP_API_KEY')  # Read from environment 
 
-# if not api_key:
-#     st.error("REDCAP_API_KEY not found in .env file")
-#     st.stop()# project = Project(api_url, api_key)
+if not api_key:
+    st.error("REDCAP_API_KEY not found in .env file")
+    st.stop()# project = Project(api_url, api_key)
 
 with open(MODEL_FILE, "rb") as f:
     clf = pickle.load(f)
