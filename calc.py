@@ -49,37 +49,26 @@ with st.sidebar:
     st.write("This calculator uses a machine learning model to predict the risk of onset delirium based on patient characteristics and laboratory results.")
 col1, col2 = st.columns(2)
 
-import streamlit as st
 # initialize only once
 if "age_numeric" not in st.session_state:
     st.session_state.age_numeric = 60
 if "age_slider" not in st.session_state:
     st.session_state.age_slider = 60
-if "sodium_numeric" not in st.session_state:
-    st.session_state.sodium_numeric = 60.0
-if "sodium_slider" not in st.session_state:
-    st.session_state.sodium_slider = 60.0
-if "bilirubin_numeric" not in st.session_state:
-    st.session_state.bilirubin_numeric = 1.0
-if "bilirubin_slider" not in st.session_state:
-    st.session_state.bilirubin_slider = 1.0
+if "albumin_numeric" not in st.session_state:
+    st.session_state.albumin_numeric = 30.0
+if "albumin_slider" not in st.session_state:
+    st.session_state.albumin_slider = 30.0
+
 
 def update_age_slider():
     st.session_state.age_slider = st.session_state.age_numeric
 def update_numin():
     st.session_state.age_numeric = st.session_state.age_slider
 
-def update_sodium_slider():
-    st.session_state.sodium_slider = st.session_state.sodium_numeric
-def update_sodium_numeric():
-    st.session_state.sodium_numeric = st.session_state.sodium_slider
-
-
-def update_bilirubin_slider():
-    st.session_state.bilirubin_slider = st.session_state.bilirubin_numeric
-def update_bilirubin_numeric():
-    st.session_state.bilirubin_numeric = st.session_state.bilirubin_slider
-
+def update_albumin_slider():
+    st.session_state.albumin_slider = st.session_state.albumin_numeric
+def update_albumin_numeric():
+    st.session_state.albumin_numeric = st.session_state.albumin_slider
 
 # Form for user inputs
 with col1:
@@ -110,27 +99,23 @@ with col1:
                                        label_visibility='hidden',
                                        help = "Enter the patient's age in years.")
 
-    sodium_cols_left, sodium_cols_right = st.columns([.3,.7])
 
-    with sodium_cols_left:
-        user_inputs['Sodium (Moles/volume)'] = st.number_input("Sodium (Moles/volume)", min_value=0.0, max_value=200.0,
-                                                               key='sodium_numeric', on_change=update_sodium_slider)
-    with sodium_cols_right:
-        user_inputs['Sodium (Moles/volume)'] = st.slider("Sodium (Moles/volume)", min_value=0.0, max_value=200.0,
-                                                          key='sodium_slider', on_change=update_sodium_numeric,
+    albumin_cols_left, albumin_cols_right = st.columns([.3,.7])
+
+    with albumin_cols_left:
+        user_inputs['Albumin'] = st.number_input("Albumin (Mass/volume)", min_value=10.0, max_value=65.0,
+                                                               key='albumin_numeric', on_change=update_albumin_slider)
+    with albumin_cols_right:
+        user_inputs['Albumin'] = st.slider("Albumin (Mass/volume)", min_value=10.0, max_value=65.0,
+                                                          key='albumin_slider', on_change=update_albumin_numeric,
                                                           label_visibility='hidden',
-                                                          help="Enter the patient's sodium level in moles per volume.")
+                                                          help="Enter the patient's albumin level in mass per volume.")
 
-    bilirubin_cols_left, bilirubin_cols_right = st.columns([.3,.7])
-
-    with bilirubin_cols_left:
-        user_inputs['Bilirubin (Moles/volume)'] = st.number_input("Bilirubin (Moles/volume)", min_value=0.0, max_value=2.0,
-                                                              key='bilirubin_numeric', on_change=update_bilirubin_slider)
-    with bilirubin_cols_right:
-        user_inputs['Bilirubin (Moles/volume)'] = st.slider("Bilirubin (Moles/volume)", min_value=0.0, max_value=2.0,
-                                                          key='bilirubin_slider', on_change=update_bilirubin_numeric,
-                                                          label_visibility='hidden',
-                                                          help="Enter the patient's bilirubin level in moles per volume.")
+    sex = st.selectbox("Select Sex", options=['Male', 'Female'], help="Select the patient's sex.")
+    if sex == 'Male':
+        user_inputs['Gender'] = 0
+    else:
+        user_inputs['Gender'] = 1
 
     diagnoses = st.multiselect("Select Diagnoses",
                                 options=diag_short_list,
