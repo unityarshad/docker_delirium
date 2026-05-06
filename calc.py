@@ -19,12 +19,12 @@ FEATURE_LIST = 'feature_list.pkl'
 SHORT_NAMES = 'short_names.pkl'
 
 # Pycap database setup
-#api_url = 'https://redcap.smh.ca/redcap/api/'
-#api_key = os.getenv('REDCAP_API_KEY')  # Read from environment 
+api_url = 'https://redcap.smh.ca/redcap/api/'
+api_key = os.getenv('REDCAP_API_KEY')  # Read from environment 
 
-# if not api_key:
-#     st.error("REDCAP_API_KEY not found in .env file")
-#     st.stop()# project = Project(api_url, api_key)
+if not api_key:
+    st.error("REDCAP_API_KEY not found in .env file")
+    st.stop()# project = Project(api_url, api_key)
 
 with open(MODEL_FILE, "rb") as f:
     clf = pickle.load(f)
