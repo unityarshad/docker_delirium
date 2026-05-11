@@ -74,7 +74,7 @@ with col1:
     user_inputs = {}
     st.markdown("### Calculator Inputs")
     mrn = st.number_input("MRN", min_value=0, max_value=99999999, key='mrn', help="Enter the patient's Medical Record Number (MRN).")
-    hospitals = ["Hospital A", "Hospital B", "Hospital C"]  # Replace with your list of hospitals
+    hospitals = ["HRH", "LHSC-U", "LHSC-V", "Niagara", "NYGH", "SBK", "SHN-B", "SHN-G", "SJHC", "SMH", "THP-CV", "THP-M", "TWH"]  # Replace with your list of hospitals
     selected_hospital = st.selectbox("Select Hospital", hospitals)
     user_inputs['Hospital'] = selected_hospital
     st.write("Enter values for the features below:")
