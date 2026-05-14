@@ -128,7 +128,7 @@ with col1:
             elif user_inputs['Age'] is None or user_inputs['Age'] == 0:
                 st.error("Please enter a valid age (18 or older).")
             else:
-                unique_id = str(uuid.uuid4())
+                unique_id = str(uuid.uuid4()).split('-')[0]
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
                 for diag in diag_short_list:
