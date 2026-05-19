@@ -116,9 +116,17 @@ with col1:
     else:
         user_inputs['Gender'] = 1
 
-    diagnoses = st.multiselect("Select Diagnoses",
-                                options=diag_short_list,
-                                help="Select all diagnoses that apply to the patient.")
+    st.markdown("#### Patient Diagnoses")
+    st.caption("Please review and check all that apply. Unchecked diagnoses default to 0.")
+    
+    # Split layout into 2 columns for better spatial design
+    chk_col1, chk_col2 = st.columns(2)
+    for idx, diag in enumerate(diag_short_list):
+        # Alternate rendering between the two columns
+        with chk_col1 if idx % 2 == 0 else chk_col2:
+            checked = st.checkbox(diag, value=False)
+            user_inputs[diag] = 1 if checked else 0
+    
     # Submit button
     submitted = st.button("Run Model")
     with col2:
@@ -131,13 +139,6 @@ with col1:
                 unique_id = str(uuid.uuid4()).split('-')[0]
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
-                for diag in diag_short_list:
-                    if diag in diagnoses:
-                        user_inputs[f'{diag}'] = 1
-                    else:
-                        user_inputs[f'{diag}'] = 0
-
-
                 df = pd.DataFrame([user_inputs])
                 df = df[short_names]
                 df.columns = features
@@ -172,7 +173,7 @@ with col1:
                 for key, val in dict_.items():
                     st.info(f'Key is: {key} - val is {val}')
                 # Push data to redcap
-                to_import = [dict]
+                to_import = [dict_]
                 # response = project.import_records(to_import)
                
                 x = requests.post(URL, json = dict_)
