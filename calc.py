@@ -170,8 +170,8 @@ with col1:
                     if isinstance(v, (np.integer, np.floating)):
                         dict_[k] = v.item()
                 
-                for key, val in dict_.items():
-                    st.info(f'Key is: {key} - val is {val}')
+                # for key, val in dict_.items(): # This is for troubleshooting and seeing what the dict and values are
+                #     st.info(f'Key is: {key} - val is {val}')
                 # Push data to redcap
                 to_import = [dict_]
                 # response = project.import_records(to_import)
