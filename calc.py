@@ -189,14 +189,12 @@ with col1:
                     'hospital_id': mapped_hospital_id,
                     'unique_id_del_input': unique_id,
                     'timestamp': timestamp,
-                    'pred_proba': pred_proba
+                    'pred_proba': pred_proba,
+                    'gender_f': str(user_inputs['Gender'])
                 }
 
                 # Copy features from the model inputs into the repeating record instrument
                 for k, v in model_dict.items():
-                    if k.lower() in ['gender', 'gender_f']:
-                        repeating_record['gender_f'] = str(int(v))
-                    else:
                         repeating_record[k] = v
 
                 # Troubleshooting output
