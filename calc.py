@@ -196,6 +196,8 @@ with col1:
                 for k, v in model_dict.items():
                     if k.lower() in ['gender', 'gender_f']:
                         repeating_record['gender_f'] = str(int(v))
+                    else:
+                        repeating_record[k] = v
 
                 # Troubleshooting output
                 for key, val in base_record.items():
