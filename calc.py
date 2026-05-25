@@ -167,6 +167,7 @@ with col1:
 
                 dict_ = df.iloc[0].to_dict()
                 dict_['unique_id_mrn'] = unique_id
+                dict_['record_id'] = unique_id
                 dict_['hospital_id'] = selected_hospital
                 dict_['unique_id_del_input'] = unique_id
                 dict_['timestamp'] = timestamp
