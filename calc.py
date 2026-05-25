@@ -151,7 +151,7 @@ with col1:
                 # Prepare input for the model
                 # pred = clf.predict(df)[0]
                 pos_predict = False
-                pred_proba = clf.predict_proba(df)[:, 1][0]
+                pred_proba = float(clf.predict_proba(df)[:, 1][0])
                 if pred_proba < 0.45:
                     st.markdown('### :green[Low Risk]')
                 elif 0.45 <= pred_proba < 0.75:
