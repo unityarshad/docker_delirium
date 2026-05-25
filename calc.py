@@ -173,6 +173,11 @@ with col1:
                 dict_['timestamp'] = timestamp
                 dict_['pred_proba'] = pred_proba
                 dict_['mrn'] = mrn
+
+                # Repeating instrument add on
+                dict_['redcap_repeat_instrument'] = 'delirium_input'
+                dict_['redcap_repeat_instance'] = 'new'
+                
                 for k,v in dict_.items():
                     # st.info(k)
                     if isinstance(v, (np.integer, np.floating)):
