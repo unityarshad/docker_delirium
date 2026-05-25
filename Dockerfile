@@ -42,4 +42,4 @@ COPY short_names.pkl /app/
 EXPOSE 8501
 
 # Command to run the Streamlit app
-CMD ["streamlit", "run", "calc.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
+CMD ["streamlit", "run", "calc.py", "--server.port=8001", "--server.address=0.0.0.0", "--server.headless=true"]
