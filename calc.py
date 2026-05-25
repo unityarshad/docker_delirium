@@ -6,7 +6,7 @@ import pickle
 import uuid
 from datetime import datetime
 import requests
-from redcap import project
+from redcap import Project
 from dotenv import load_dotenv
 import os
 
@@ -24,7 +24,9 @@ api_key = os.getenv('REDCAP_API_KEY')  # Read from environment
 
 if not api_key:
     st.error("REDCAP_API_KEY not found in .env file")
-    st.stop()# project = Project(api_url, api_key)
+    st.stop()
+    
+project = Project(api_url, api_key)
 
 with open(MODEL_FILE, "rb") as f:
     clf = pickle.load(f)
@@ -179,9 +181,12 @@ with col1:
                     st.info(f'Key is: {key} - val is {val}')
                 # Push data to redcap
                 to_import = [dict_]
-                # response = project.import_records(to_import)
+                try:
+                    response = project.import_records(to_import)
+                    st.success(f"Successfully uploaded to REDCap! Response: {response}")
+                except Exception as e:
+                    st.error(f"REDCAP Error: {e}. Ensure your dictionary keys match your REDCap field names exactly.")
                
-                x = requests.post(URL, json = dict_)
-                if x.status_code != 200:
-                    st.error("Error saving results to the database.")
-    
+                # x = requests.post(URL, json = dict_)
+                # if x.status_code != 200:
+                #     st.error("Error saving results to the database.")
