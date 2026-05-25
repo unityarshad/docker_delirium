@@ -194,10 +194,8 @@ with col1:
 
                 # Copy features from the model inputs into the repeating record instrument
                 for k, v in model_dict.items():
-                    if k == 'Gender':
-                        repeating_record['gender_f'] = v  # Fix 3: Map 'Gender' to REDCap's 'gender_f'
-                    else:
-                        repeating_record[k] = v
+                    if k.lower() in ['gender', 'gender_f']:
+                        repeating_record['gender_f'] = str(int(v))
 
                 # Troubleshooting output
                 for key, val in base_record.items():
