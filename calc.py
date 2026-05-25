@@ -35,11 +35,6 @@ with open(FEATURE_LIST, "rb") as f:
 with open(SHORT_NAMES, "rb") as f:
     short_names = pickle.load(f)
 
-diag_idx_list = [i for i,x in enumerate(features) if 'diag_' in x]
-
-diag_list = [features[i] for i in diag_idx_list]
-diag_short_list = [short_names[i] for i in diag_idx_list]
-
 st.title("Onset Delirium Risk Prediction Calculator")
 # st.subheader("This calculator predicts whether a patient is at risk of developing onset delirium.")
 
@@ -54,9 +49,9 @@ if "age_numeric" not in st.session_state:
 if "age_slider" not in st.session_state:
     st.session_state.age_slider = 60
 if "albumin_numeric" not in st.session_state:
-    st.session_state.albumin_numeric = 30.0
+    st.session_state.albumin_numeric = 34.71
 if "albumin_slider" not in st.session_state:
-    st.session_state.albumin_slider = 30.0
+    st.session_state.albumin_slider = 34.71
 
 
 def update_age_slider():
@@ -73,14 +68,14 @@ def update_albumin_numeric():
 with col1:
     user_inputs = {}
     st.markdown("### Calculator Inputs")
-    mrn = st.number_input("MRN", min_value=0, max_value=99999999, key='mrn', help="Enter the patient's Medical Record Number (MRN).")
+    mrn = st.number_input("MRN", min_value=0, max_value=99999999, key='mrn', help="Enter the patient's Medical Record Number (MRN).", value = None)
     hospitals = ["HRH", "LHSC-U", "LHSC-V", "Niagara", "NYGH", "SBK", "SHN-B", "SHN-G", "SJHC", "SMH", "THP-CV", "THP-M", "TWH"]  # Replace with your list of hospitals
     selected_hospital = st.selectbox("Select Hospital", hospitals)
     user_inputs['Hospital'] = selected_hospital
     st.write("Enter values for the features below:")
     age_cols_left, age_cols_right = st.columns([.3,.7])
     with age_cols_left:
-        user_inputs['Age'] = st.number_input("Age",
+        user_inputs['age'] = st.number_input("Age",
                                              min_value=18,
                                              max_value=120,
                                             #  value=60,
@@ -89,7 +84,7 @@ with col1:
                                              
                                              )
     with age_cols_right:
-        user_inputs['Age'] = st.slider("Age", 
+        user_inputs['age'] = st.slider("Age", 
                                        min_value=18, 
                                        max_value=120, 
                                     #    value=60,
@@ -102,10 +97,10 @@ with col1:
     albumin_cols_left, albumin_cols_right = st.columns([.3,.7])
 
     with albumin_cols_left:
-        user_inputs['Albumin'] = st.number_input("Albumin (Mass/volume)", min_value=10.0, max_value=65.0,
+        user_inputs['lab_albumin'] = st.number_input("Albumin (Mass/volume)", min_value=10.0, max_value=65.0, 
                                                                key='albumin_numeric', on_change=update_albumin_slider)
     with albumin_cols_right:
-        user_inputs['Albumin'] = st.slider("Albumin (Mass/volume)", min_value=10.0, max_value=65.0,
+        user_inputs['lab_albumin'] = st.slider("Albumin (Mass/volume)", min_value=10.0, max_value=65.0,
                                                           key='albumin_slider', on_change=update_albumin_numeric,
                                                           label_visibility='hidden',
                                                           help="Enter the patient's albumin level in mass per volume.")
@@ -118,42 +113,52 @@ with col1:
 
     st.markdown("#### Patient Diagnoses")
     st.caption("Please review and check all that apply. Unchecked diagnoses default to 0.")
-    
+
+
+    diag_features = [x for x in features if 'diag_' in x]
+    diag_short_names = [short_names[i] for i, feat in enumerate(features) if 'diag_' in feat]
+
     # Split layout into 2 columns for better spatial design
     chk_col1, chk_col2 = st.columns(2)
-    for idx, diag in enumerate(diag_short_list):
+    for idx, diag in enumerate(diag_short_names):
         # Alternate rendering between the two columns
         with chk_col1 if idx % 2 == 0 else chk_col2:
+            real_name = diag_features[idx]
             checked = st.checkbox(diag, value=False)
-            user_inputs[diag] = 1 if checked else 0
-    
+            user_inputs[real_name] = 1 if checked else 0
+
     # Submit button
     submitted = st.button("Run Model")
     with col2:
         if submitted:
             if mrn is None or mrn == 0:
                 st.error("Please enter an MRN.")
-            elif user_inputs['Age'] is None or user_inputs['Age'] == 0:
+            elif user_inputs['age'] is None or user_inputs['age'] == 0:
                 st.error("Please enter a valid age (18 or older).")
             else:
                 unique_id = str(uuid.uuid4()).split('-')[0]
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
                 df = pd.DataFrame([user_inputs])
-                df = df[short_names]
+                
+                df = df[features]
                 df.columns = features
 
                 st.markdown("### Model Output")
                 
                 # Prepare input for the model
                 # pred = clf.predict(df)[0]
+                pos_predict = False
                 pred_proba = clf.predict_proba(df)[:, 1][0]
-                if pred_proba < 0.5:
-                    st.markdown('## :green[Low Risk]')
-                elif 0.5 <= pred_proba < 0.75:
-                    st.markdown('## :orange[Moderate Risk]')
+                if pred_proba < 0.45:
+                    st.markdown('### :green[Low Risk]')
+                elif 0.45 <= pred_proba < 0.75:
+                    pos_predict = True
+                    st.markdown('### :orange[Moderate Risk]')
                 elif pred_proba >= 0.75:
-                    st.markdown('## :red[High Risk]')
+                    pos_predict = True
+                    st.markdown('### :red[High Risk]')
+                
 
                 st.info(f"**Unique Identifier:** `{unique_id}`")
                 st.info(f"**Prediction generated at** `{timestamp}`")
