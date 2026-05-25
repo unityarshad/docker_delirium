@@ -165,34 +165,51 @@ with col1:
                 st.info(f"**Unique Identifier:** `{unique_id}`")
                 st.info(f"**Prediction generated at** `{timestamp}`")
 
-                dict_ = df.iloc[0].to_dict()
-                dict_['unique_id_mrn'] = unique_id
-                dict_['record_id'] = unique_id
-                dict_['hospital_id'] = selected_hospital
-                dict_['unique_id_del_input'] = unique_id
-                dict_['timestamp'] = timestamp
-                dict_['pred_proba'] = pred_proba
-                dict_['mrn'] = mrn
-
-                # Repeating instrument add on
-                dict_['redcap_repeat_instrument'] = 'delirium_input'
-                dict_['redcap_repeat_instance'] = 'new'
-                
-                for k,v in dict_.items():
-                    # st.info(k)
+                model_dict = df.iloc[0].to_dict()
+                for k, v in model_dict.items():
                     if isinstance(v, (np.integer, np.floating)):
-                        dict_[k] = v.item()
-                
-                for key, val in dict_.items(): # This is for troubleshooting and seeing what the dict and values are
-                    st.info(f'Key is: {key} - val is {val}')
-                # Push data to redcap
-                to_import = [dict_]
+                        model_dict[k] = v.item()
+
+                # Hospital Mapping
+                hospital_mapping = {name: idx + 1 for idx, name in enumerate(hospitals)}
+                mapped_hospital_id = hospital_mapping.get(selected_hospital)
+
+                # mrn_fields form
+                base_record = {
+                    'record_id': unique_id,
+                    'unique_id_mrn': unique_id,
+                    'mrn': mrn
+                }
+
+                # delirium_input form
+                repeating_record = {
+                    'record_id': unique_id,
+                    'redcap_repeat_instrument': 'delirium_input',
+                    'redcap_repeat_instance': 'new',
+                    'hospital_id': mapped_hospital_id,
+                    'unique_id_del_input': unique_id,
+                    'timestamp': timestamp,
+                    'pred_proba': pred_proba
+                }
+
+                # Copy features from the model inputs into the repeating record instrument
+                for k, v in model_dict.items():
+                    if k == 'Gender':
+                        repeating_record['gender_f'] = v  # Fix 3: Map 'Gender' to REDCap's 'gender_f'
+                    else:
+                        repeating_record[k] = v
+
+                # Troubleshooting output
+                for key, val in base_record.items():
+                    st.info(f'[Base Form] {key}: {val}')
+                for key, val in repeating_record.items():
+                    st.info(f'[Repeating Form] {key}: {val}')
+
+                # Push split data to REDCap
+                to_import = [base_record, repeating_record]
                 try:
                     response = project.import_records(to_import)
                     st.success(f"Successfully uploaded to REDCap! Response: {response}")
                 except Exception as e:
                     st.error(f"REDCAP Error: {e}. Ensure your dictionary keys match your REDCap field names exactly.")
-               
-                # x = requests.post(URL, json = dict_)
-                # if x.status_code != 200:
-                #     st.error("Error saving results to the database.")
+                    
