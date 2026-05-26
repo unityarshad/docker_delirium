@@ -198,10 +198,10 @@ with col1:
                         repeating_record[k] = v
 
                 # Troubleshooting output
-                for key, val in base_record.items():
-                    st.info(f'[Base Form] {key}: {val}')
-                for key, val in repeating_record.items():
-                    st.info(f'[Repeating Form] {key}: {val}')
+                # for key, val in base_record.items():
+                #     st.info(f'[Base Form] {key}: {val}')
+                # for key, val in repeating_record.items():
+                #     st.info(f'[Repeating Form] {key}: {val}')
 
                 # Push split data to REDCap
                 to_import = [base_record, repeating_record]
