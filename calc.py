@@ -207,7 +207,8 @@ with col1:
                 to_import = [base_record, repeating_record]
                 try:
                     response = project.import_records(to_import)
-                    st.success(f"Successfully uploaded to REDCap! Response: {response}")
+                    st.success(f"Successfully uploaded to REDCap!") 
+                    # st.success(f"Response: {response}")
                 except Exception as e:
                     st.error(f"REDCAP Error: {e}. Ensure your dictionary keys match your REDCap field names exactly.")
                     
