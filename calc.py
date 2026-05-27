@@ -14,7 +14,7 @@ import os
 load_dotenv()
 
 # Model
-MODEL_FILE = 'xgb_model.pkl'
+MODEL_FILE = 'final_10_feature_xgb_model_2026_05_25.pkl'
 FEATURE_LIST = 'feature_list.pkl'
 SHORT_NAMES = 'short_names.pkl'
 
