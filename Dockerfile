@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir --trusted-host pypi.org --trusted-host files.pyth
 
 # copy application files
 COPY calc.py /app/
-COPY xgb_model.pkl /app/
+COPY final_10_feature_xgb_model_2026_05_25.pkl /app/
 COPY feature_list.pkl /app/
 COPY short_names.pkl /app/
 # COPY resources/ /app/resources/
