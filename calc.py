@@ -39,6 +39,7 @@ with open(SHORT_NAMES, "rb") as f:
 
 st.title("Onset Delirium Risk Prediction Calculator")
 # st.subheader("This calculator predicts whether a patient is at risk of developing onset delirium.")
+st.sunheader("Please only refer to patient's documentation for this current admission. This includes reviewing the ED physician note, medicine physician admission note/initial consultation note and lab test results.")
 
 with st.sidebar:
     st.write("Delirium is an acute and fluctuating disturbance in attention and cognition. It is common among hospitalized older adults and is associated with increased morbidity, mortality, length of hospital stay, and healthcare costs. Early identification of patients at risk for delirium can help implement preventive strategies and improve patient outcomes.")
@@ -95,11 +96,17 @@ with col1:
                                        label_visibility='hidden',
                                        help = "Enter the patient's age in years.")
 
+    sex = st.selectbox("Select Sex", options=['Male', 'Female'], help="Select the patient's sex.")
+    if sex == 'Male':
+        user_inputs['Gender'] = 0
+    else:
+        user_inputs['Gender'] = 1
+        
 
     albumin_cols_left, albumin_cols_right = st.columns([.3,.7])
 
     with albumin_cols_left:
-        user_inputs['lab_albumin'] = st.number_input("Albumin (Mass/volume)", min_value=10.0, max_value=65.0, 
+        user_inputs['lab_albumin'] = st.number_input("Albumin (Mass/volume) Value for the FIRST RESULT of this encounter", min_value=10.0, max_value=65.0, 
                                                                key='albumin_numeric', on_change=update_albumin_slider)
     with albumin_cols_right:
         user_inputs['lab_albumin'] = st.slider("Albumin (Mass/volume)", min_value=10.0, max_value=65.0,
@@ -107,14 +114,8 @@ with col1:
                                                           label_visibility='hidden',
                                                           help="Enter the patient's albumin level in mass per volume.")
 
-    sex = st.selectbox("Select Sex", options=['Male', 'Female'], help="Select the patient's sex.")
-    if sex == 'Male':
-        user_inputs['Gender'] = 0
-    else:
-        user_inputs['Gender'] = 1
-
     st.markdown("#### Patient Diagnoses")
-    st.caption("Please review and check all that apply. Unchecked diagnoses default to 0.")
+    st.caption("Please review and check all the current or historical diagnoses that apply. Unchecked diagnoses default to 0.")
 
 
     diag_features = [x for x in features if 'diag_' in x]
