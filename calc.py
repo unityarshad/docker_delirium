@@ -39,7 +39,7 @@ with open(SHORT_NAMES, "rb") as f:
 
 st.title("Onset Delirium Risk Prediction Calculator")
 # st.subheader("This calculator predicts whether a patient is at risk of developing onset delirium.")
-st.subheader("Please only refer to patient's documentation for this current admission. This includes reviewing the ED physician note, medicine physician admission note/initial consultation note and lab test results.")
+st.markdown("***Please only refer to patient's documentation for this current admission. This includes reviewing the ED physician note, medicine physician admission note/initial consultation note and lab test results.***")
 
 with st.sidebar:
     st.write("Delirium is an acute and fluctuating disturbance in attention and cognition. It is common among hospitalized older adults and is associated with increased morbidity, mortality, length of hospital stay, and healthcare costs. Early identification of patients at risk for delirium can help implement preventive strategies and improve patient outcomes.")
