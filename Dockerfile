@@ -30,10 +30,7 @@ COPY calc.py /app/
 COPY final_10_feature_xgb_model_2026_05_25.pkl /app/
 COPY feature_list.pkl /app/
 COPY short_names.pkl /app/
-# COPY resources/ /app/resources/
-# COPY templates/ /app/templates/
-# COPY local_data /app/local_data
-# COPY static/ /app/static/
+copy gemini_logo.png /app/
 
 # Set permissions
 # RUN chmod -R 755 /app/resources /app/local_data /app/static
