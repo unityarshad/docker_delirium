@@ -42,6 +42,8 @@ st.title("Onset Delirium Risk Prediction Calculator")
 st.markdown("***Please only refer to patient's documentation for this current admission. This includes reviewing the ED physician note, medicine physician admission note/initial consultation note and lab test results.***")
 
 with st.sidebar:
+    st.image("gemini_logo.png", use_container_width=True)
+    st.markdown("")
     st.write("Delirium is an acute and fluctuating disturbance in attention and cognition. It is common among hospitalized older adults and is associated with increased morbidity, mortality, length of hospital stay, and healthcare costs. Early identification of patients at risk for delirium can help implement preventive strategies and improve patient outcomes.")
     st.write("This calculator uses a machine learning model to predict the risk of onset delirium based on patient characteristics and laboratory results.")
 col1, col2 = st.columns(2)
