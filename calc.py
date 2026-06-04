@@ -72,7 +72,7 @@ with col1:
     user_inputs = {}
     st.markdown("### Calculator Inputs")
     mrn = st.number_input("MRN", min_value=0, max_value=99999999, key='mrn', help="Enter the patient's Medical Record Number (MRN).", value = None)
-    hospitals = ["HRH", "LHSC-U", "LHSC-V", "Niagara", "NYGH", "SBK", "SHN-B", "SHN-G", "SJHC", "SMH", "THP-CV", "THP-M", "TWH"]  # Replace with your list of hospitals
+    hospitals = ["HRH", "LHSC-U", "LHSC-V", "Niagara", "NYGH", "SBK", "SHN-B", "SHN-G", "SJHC", "SMH", "THP-CV", "THP-M", "TWH"] 
     selected_hospital = st.selectbox("Select Hospital", hospitals)
     user_inputs['Hospital'] = selected_hospital
     st.write("Enter values for the features below:")
@@ -175,11 +175,29 @@ with col1:
                 hospital_mapping = {name: idx + 1 for idx, name in enumerate(hospitals)}
                 mapped_hospital_id = hospital_mapping.get(selected_hospital)
 
+                dag_mapping = {
+                    'HRH': 'hrh',  
+                    'LHSC-U': 'lhsc__u', 
+                    'LHSC-V': 'lhsc__v', 
+                    'Niagara': 'niagara', 
+                    'NYGH': 'nygh', 
+                    'SBK': 'sbk', 
+                    'SHN-B': 'shn__b', 
+                    'SHN-G': 'shn__g', 
+                    'SJHC': 'sjhc', 
+                    'SMH': 'smh', 
+                    'THP-CV': 'thp__cv', 
+                    'THP-M': 'thp__m', 
+                    'TWH': 'twh',
+                }
+                selected_dag = dag_mapping.get(selected_hospital)
+
                 # mrn_fields form
                 base_record = {
                     'record_id': unique_id,
                     'unique_id_mrn': unique_id,
-                    'mrn': mrn
+                    'mrn': mrn,
+                    'redcap_data_access_group': selected_dag
                 }
 
                 # delirium_input form
@@ -191,7 +209,8 @@ with col1:
                     'unique_id_del_input': unique_id,
                     'timestamp': timestamp,
                     'pred_proba': pred_proba,
-                    'gender_f': str(user_inputs['Gender'])
+                    'gender_f': str(user_inputs['Gender']),
+                    'redcap_data_access_group': selected_dag
                 }
 
                 # Copy features from the model inputs into the repeating record instrument
