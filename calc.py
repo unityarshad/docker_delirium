@@ -71,7 +71,7 @@ def update_albumin_numeric():
 with col1:
     user_inputs = {}
     st.markdown("### Calculator Inputs")
-    mrn = st.number_input("MRN", min_value=0, max_value=99999999, key='mrn', help="Enter the patient's Medical Record Number (MRN).", value = None)
+    mrn = st.text_input("MRN", max_chars=15, key='mrn', help="Enter the patient's Medical Record Number (MRN).", value = "")
     hospitals = ["HRH", "LHSC-U", "LHSC-V", "Niagara", "NYGH", "SBK", "SHN-B", "SHN-G", "SJHC", "SMH", "THP-CV", "THP-M", "TWH"] 
     selected_hospital = st.selectbox("Select Hospital", hospitals)
     user_inputs['Hospital'] = selected_hospital
@@ -134,7 +134,7 @@ with col1:
     submitted = st.button("Run Model")
     with col2:
         if submitted:
-            if mrn is None or mrn == 0:
+            if not mrn or mrn.strip() == "":
                 st.error("Please enter an MRN.")
             elif user_inputs['age'] is None or user_inputs['age'] == 0:
                 st.error("Please enter a valid age (18 or older).")
