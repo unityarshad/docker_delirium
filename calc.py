@@ -156,11 +156,8 @@ with col1:
                 pos_predict = False
                 pred_proba = float(clf.predict_proba(df)[:, 1][0])
                 if pred_proba < 0.45:
-                    st.markdown('### :green[Low Risk]')
-                elif 0.45 <= pred_proba < 0.75:
-                    pos_predict = True
-                    st.markdown('### :orange[Moderate Risk]')
-                elif pred_proba >= 0.75:
+                    st.markdown('### :green[Lower Risk]')
+                elif pred_proba >= 0.45:
                     pos_predict = True
                     st.markdown('### :red[High Risk]')
                 
