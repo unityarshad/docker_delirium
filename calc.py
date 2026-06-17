@@ -156,12 +156,12 @@ with col1:
                 pos_predict = False
                 pred_proba = float(clf.predict_proba(df)[:, 1][0])
                 if pred_proba < 0.45:
-                    st.markdown('### :green[Lower Risk]')
-                    st.markdown("This category includes patients that are at low or moderate risk of developing delirium. Use clinical judgment to determine this patient's suitability for delirium prevention efforts as part of routine standard of care.")
+                    st.markdown('## :green[Lower Risk]')
+                    st.success("This category includes patients that are at low or moderate risk of developing delirium. Use clinical judgment to determine this patient's suitability for delirium prevention efforts as part of routine standard of care.")
                 elif pred_proba >= 0.45:
                     pos_predict = True
-                    st.markdown('### :red[High Risk]')
-                    st.markdown("This patient has an estimated greater than 50% risk of developing delirium. If clinically appropriate, consider prioritizing them for delirium prevention bundle.")
+                    st.markdown('## :red[High Risk]')
+                    st.error("This patient has an estimated greater than 50% risk of developing delirium. If clinically appropriate, consider prioritizing them for delirium prevention bundle.")
                 
 
                 st.info(f"**Unique Identifier:** `{unique_id}`")
