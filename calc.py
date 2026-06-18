@@ -210,7 +210,7 @@ with col1:
                     'unique_id_del_input': unique_id,
                     'timestamp': timestamp,
                     'pred_proba': pred_proba,
-                    # 'delirium_prediction': 'Lower Risk' if pred_proba < 0.45 else 'High Risk',
+                    'delirium_prediction': 'Lower Risk' if pred_proba < 0.45 else 'High Risk',
                     'gender_f': str(user_inputs['Gender']),
                     'redcap_data_access_group': selected_dag
                 }
