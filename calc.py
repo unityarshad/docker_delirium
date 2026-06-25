@@ -20,12 +20,13 @@ SHORT_NAMES = 'short_names.pkl'
 
 # Pycap database setup
 api_url = 'https://redcap.smh.ca/redcap/api/'
-api_key = os.getenv('REDCAP_API_KEY')  # Read from environment 
+api_key = os.getenv('REDCAP_API_KEY')  # Read from environment
+ALBUMIN_MEAN = 34.71  # Mean albumin value for the model
 
 if not api_key:
     st.error("REDCAP_API_KEY not found in .env file")
     st.stop()
-    
+
 project = Project(api_url, api_key)
 
 with open(MODEL_FILE, "rb") as f:
@@ -51,70 +52,50 @@ col1, col2 = st.columns(2)
 # initialize only once
 if "age_numeric" not in st.session_state:
     st.session_state.age_numeric = 60
-if "age_slider" not in st.session_state:
-    st.session_state.age_slider = 60
 if "albumin_numeric" not in st.session_state:
     st.session_state.albumin_numeric = 34.71
-if "albumin_slider" not in st.session_state:
-    st.session_state.albumin_slider = 34.71
 
 
-def update_age_slider():
-    st.session_state.age_slider = st.session_state.age_numeric
-def update_numin():
-    st.session_state.age_numeric = st.session_state.age_slider
-
-def update_albumin_slider():
-    st.session_state.albumin_slider = st.session_state.albumin_numeric
-def update_albumin_numeric():
-    st.session_state.albumin_numeric = st.session_state.albumin_slider
+def toggle_albumin():
+    # Checked = not measured: clear the box. Unchecked: restore the mean.
+    st.session_state.albumin_numeric = None if st.session_state.albumin_not_measured else ALBUMIN_MEAN
 
 # Form for user inputs
 with col1:
     user_inputs = {}
     st.markdown("### Calculator Inputs")
     mrn = st.text_input("MRN", max_chars=15, key='mrn', help="Enter the patient's Medical Record Number (MRN).", value = "")
+    st.markdown("<hr style='margin:1px 0'>", unsafe_allow_html=True)
+
     hospitals = ["HRH", "LHSC-U", "LHSC-V", "Niagara", "NYGH", "SBK", "SHN-B", "SHN-G", "SJHC", "SMH", "THP-CV", "THP-M", "TWH"] 
     selected_hospital = st.selectbox("Select Hospital", hospitals)
     user_inputs['Hospital'] = selected_hospital
     st.write("Enter values for the features below:")
-    age_cols_left, age_cols_right = st.columns([.3,.7])
-    with age_cols_left:
-        user_inputs['age'] = st.number_input("Age",
-                                             min_value=18,
-                                             max_value=120,
-                                            #  value=60,
-                                             key='age_numeric',
-                                             on_change=update_age_slider,
-                                             
-                                             )
-    with age_cols_right:
-        user_inputs['age'] = st.slider("Age", 
-                                       min_value=18, 
-                                       max_value=120, 
-                                    #    value=60,
-                                       key='age_slider',
-                                       on_change=update_numin,
-                                       label_visibility='hidden',
-                                       help = "Enter the patient's age in years.")
+    st.markdown("<hr style='margin:1px 0'>", unsafe_allow_html=True)
+    user_inputs['age'] = st.number_input("Age",
+                                         min_value=18,
+                                         max_value=120,
+                                         key='age_numeric',
+                                         help="Enter the patient's age in years.")
 
+    st.markdown("<hr style='margin:1px 0'>", unsafe_allow_html=True)
     sex = st.selectbox("Select Sex", options=['Male', 'Female'], help="Select the patient's sex.")
     if sex == 'Male':
         user_inputs['Gender'] = 0
     else:
         user_inputs['Gender'] = 1
         
+    st.markdown("<hr style='margin:1px 0'>", unsafe_allow_html=True)
 
-    albumin_cols_left, albumin_cols_right = st.columns([.3,.7])
+    albumin_not_measured = st.session_state.get('albumin_not_measured', False)
+    st.number_input("Albumin (Mass/volume) Value for the FIRST RESULT of this encounter", min_value=10.0, max_value=65.0,
+                    key='albumin_numeric', disabled=albumin_not_measured,
+                    help="Enter the patient's albumin level in mass per volume.")
 
-    with albumin_cols_left:
-        user_inputs['lab_albumin'] = st.number_input("Albumin (Mass/volume) Value for the FIRST RESULT of this encounter", min_value=10.0, max_value=65.0, 
-                                                               key='albumin_numeric', on_change=update_albumin_slider)
-    with albumin_cols_right:
-        user_inputs['lab_albumin'] = st.slider("Albumin (Mass/volume)", min_value=10.0, max_value=65.0,
-                                                          key='albumin_slider', on_change=update_albumin_numeric,
-                                                          label_visibility='hidden',
-                                                          help="Enter the patient's albumin level in mass per volume.")
+    albumin_not_measured = st.checkbox("Albumin not measured", value=False, key='albumin_not_measured',
+                                       on_change=toggle_albumin, help="Check if albumin was not measured.")
+
+    user_inputs['lab_albumin'] = ALBUMIN_MEAN if albumin_not_measured else st.session_state.albumin_numeric
 
     st.markdown("#### Patient Diagnoses")
     st.caption("Please review and check all the current or historical diagnoses that apply. Unchecked diagnoses default to 0.")
@@ -219,6 +200,10 @@ with col1:
                 for k, v in model_dict.items():
                         repeating_record[k] = v
 
+                # Model used the mean for unmeasured albumin; store blank (NaN) in REDCap
+                if albumin_not_measured:
+                    repeating_record['lab_albumin'] = ''
+
                 # Troubleshooting output
                 # for key, val in base_record.items():
                 #     st.info(f'[Base Form] {key}: {val}')
@@ -229,7 +214,7 @@ with col1:
                 to_import = [base_record, repeating_record]
                 try:
                     response = project.import_records(to_import)
-                    st.success(f"Successfully uploaded to REDCap!") 
+                    st.success(f"Successfully uploaded to REDCap!")
                     # st.success(f"Response: {response}")
                 except Exception as e:
                     st.error(f"REDCAP Error: {e}. Ensure your dictionary keys match your REDCap field names exactly.")
