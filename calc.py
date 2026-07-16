@@ -49,16 +49,21 @@ with st.sidebar:
     st.write("This calculator uses a machine learning model to predict the risk of onset delirium based on patient characteristics and laboratory results.")
 col1, col2 = st.columns(2)
 
-# initialize only once
-if "age_numeric" not in st.session_state:
-    st.session_state.age_numeric = 60
-if "albumin_numeric" not in st.session_state:
-    st.session_state.albumin_numeric = 34.71
+# Diagnosis features (computed early so callbacks can reference them)
+diag_features = [x for x in features if 'diag_' in x]
+diag_short_names = [short_names[i] for i, feat in enumerate(features) if 'diag_' in feat]
 
 
 def toggle_albumin():
-    # Checked = not measured: clear the box. Unchecked: restore the mean.
-    st.session_state.albumin_numeric = None if st.session_state.albumin_not_measured else ALBUMIN_MEAN
+    # Checked = not measured: clear the box. Unchecked: also clear (no default).
+    st.session_state.albumin_numeric = None
+
+
+def clear_diags():
+    # When "None of the above" is checked, uncheck every diagnosis box.
+    if st.session_state.diag_none:
+        for feat in diag_features:
+            st.session_state[f"diag_{feat}"] = False
 
 # Form for user inputs
 with col1:
@@ -75,21 +80,19 @@ with col1:
     user_inputs['age'] = st.number_input("Age",
                                          min_value=18,
                                          max_value=120,
+                                         value=None,
                                          key='age_numeric',
                                          help="Enter the patient's age in years.")
 
     st.markdown("<hr style='margin:1px 0'>", unsafe_allow_html=True)
-    sex = st.selectbox("Select Sex", options=['Male', 'Female'], help="Select the patient's sex.")
-    if sex == 'Male':
-        user_inputs['Gender'] = 0
-    else:
-        user_inputs['Gender'] = 1
-        
+    sex = st.selectbox("Select Sex", options=['Male', 'Female'], index=None,
+                       placeholder="Select sex...", help="Select the patient's sex.")
+
     st.markdown("<hr style='margin:1px 0'>", unsafe_allow_html=True)
 
     albumin_not_measured = st.session_state.get('albumin_not_measured', False)
     st.number_input("Albumin (Mass/volume) Value for the FIRST RESULT of this encounter", min_value=10.0, max_value=65.0,
-                    key='albumin_numeric', disabled=albumin_not_measured,
+                    value=None, key='albumin_numeric', disabled=albumin_not_measured,
                     help="Enter the patient's albumin level in mass per volume.")
 
     albumin_not_measured = st.checkbox("Albumin not measured", value=False, key='albumin_not_measured',
@@ -98,11 +101,11 @@ with col1:
     user_inputs['lab_albumin'] = ALBUMIN_MEAN if albumin_not_measured else st.session_state.albumin_numeric
 
     st.markdown("#### Patient Diagnoses")
-    st.caption("Please review and check all the current or historical diagnoses that apply. Unchecked diagnoses default to 0.")
+    st.caption("Please review and check all the current or historical diagnoses that apply, or check 'None of the above'.")
 
-
-    diag_features = [x for x in features if 'diag_' in x]
-    diag_short_names = [short_names[i] for i, feat in enumerate(features) if 'diag_' in feat]
+    none_selected = st.session_state.get('diag_none', False)
+    st.checkbox("None of the above", key='diag_none', on_change=clear_diags,
+                help="Check if none of the diagnoses below apply.")
 
     # Split layout into 2 columns for better spatial design
     chk_col1, chk_col2 = st.columns(2)
@@ -110,18 +113,37 @@ with col1:
         # Alternate rendering between the two columns
         with chk_col1 if idx % 2 == 0 else chk_col2:
             real_name = diag_features[idx]
-            checked = st.checkbox(diag, value=False)
-            user_inputs[real_name] = 1 if checked else 0
+            checked = st.checkbox(diag, key=f"diag_{real_name}", disabled=none_selected)
+            user_inputs[real_name] = 0 if none_selected else (1 if checked else 0)
 
     # Submit button
     submitted = st.button("Run Model")
     with col2:
         if submitted:
-            if not mrn or mrn.strip() == "":
-                st.error("Please enter an MRN.")
-            elif user_inputs['age'] is None or user_inputs['age'] == 0:
-                st.error("Please enter a valid age (18 or older).")
+            errors = []
+            if not mrn.strip():
+                errors.append("MRN")
+            if st.session_state.age_numeric is None:
+                errors.append("Age")
+            if sex is None:
+                errors.append("Sex")
+            if not albumin_not_measured and st.session_state.albumin_numeric is None:
+                errors.append("Albumin (enter a value or check 'not measured')")
+            if not none_selected and sum(user_inputs[f] for f in diag_features) == 0:
+                errors.append("at least one diagnosis (or 'None of the above')")
+
+            if errors:
+                # Viewport-fixed box so the error stays visible without scrolling up
+                st.markdown(
+                    "<div style='position:fixed; top:80px; right:24px; z-index:9999; "
+                    "background:#ff4b4b; color:white; padding:14px 18px; border-radius:8px; "
+                    "box-shadow:0 3px 12px rgba(0,0,0,0.35); max-width:340px; font-size:0.9rem;'>"
+                    "⚠️ <b>Please complete:</b> " + ", ".join(errors) + "</div>",
+                    unsafe_allow_html=True)
             else:
+                # Sex mapping (validated non-None above)
+                user_inputs['Gender'] = 0 if sex == 'Male' else 1
+
                 unique_id = "calc_" + str(uuid.uuid4()).split('-')[0]
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
