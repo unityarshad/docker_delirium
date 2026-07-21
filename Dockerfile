@@ -1,7 +1,12 @@
 FROM python:3.10-slim
 
 # Disable APT sandboxing for rootless Podman compatibility
-RUN echo 'APT::Sandbox::User "root";' > /etc/apt/apt.conf.d/disable-sandbox
+RUN echo 'APT::Sandbox::User "root";' > /etc/apt/apt.conf.d/disable-sandbox \
+    && rm -rf /var/lib/apt/lists/partial /var/lib/apt/lists/auxfiles /var/cache/apt/archives/partial \
+    && mkdir -p /var/lib/apt/lists/partial /var/lib/apt/lists/auxfiles /var/cache/apt/archives/partial \
+    && chmod 0700 /var/lib/apt/lists/partial \
+    && chmod 0755 /var/lib/apt/lists/auxfiles \
+    && chmod 0700 /var/cache/apt/archives/partial
 
 # Pass the architecture as an argument
 ARG TARGETARCH
