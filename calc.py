@@ -75,6 +75,9 @@ with col1:
     hospitals = ["HRH", "LHSC-U", "LHSC-V", "Niagara", "NYGH", "SBK", "SHN-B", "SHN-G", "SJHC", "SMH", "THP-CV", "THP-M", "TWH"] 
     selected_hospital = st.selectbox("Select Hospital", hospitals)
     user_inputs['Hospital'] = selected_hospital
+
+    is_baseline = st.checkbox("Is this a baseline cohort patient?", key='is_baseline')
+    
     st.write("Enter values for the features below:")
     st.markdown("<hr style='margin:1px 0'>", unsafe_allow_html=True)
     user_inputs['age'] = st.number_input("Age",
@@ -215,6 +218,7 @@ with col1:
                     'pred_proba': pred_proba,
                     'delirium_prediction': 1 if pred_proba < 0.45 else 2,
                     'gender_f': str(user_inputs['Gender']),
+                    'baseline_cohort': 1 if is_baseline else 0,
                     'redcap_data_access_group': selected_dag
                 }
 
